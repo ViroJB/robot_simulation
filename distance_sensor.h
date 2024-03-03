@@ -1,5 +1,7 @@
-#ifndef DISTANCE_SENSOR_HPP
-#define DISTANCE_SENSOR_HPP
+#ifndef DISTANCE_SENSOR_H
+#define DISTANCE_SENSOR_H
+
+#include <iostream>
 
 #include "i_sensor.h"
 #include "event_dispatcher.h"
@@ -15,7 +17,7 @@ private:
 public:
     DistanceSensor(EventDispatcher* eventDispatcher);
 
-    void testTrigger();
+    void eventTriggered(const std::any& data);
     void measure();
     void setTargetPosition(int x, int y);
     void setRobotPosition(int x, int y);
@@ -23,4 +25,4 @@ public:
     std::string getId();
 };
 
-#endif // DISTANCE_SENSOR_HPP
+#endif // DISTANCE_SENSOR_H

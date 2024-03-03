@@ -1,5 +1,5 @@
-#ifndef I_SENSOR_HPP
-#define I_SENSOR_HPP
+#ifndef I_SENSOR_H
+#define I_SENSOR_H
 
 #include <string>
 
@@ -13,4 +13,4 @@ public:
     virtual ~Sensor() {}
 };
 
-#endif // I_SENSOR_HPP
+#endif // I_SENSOR_H

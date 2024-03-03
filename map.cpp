@@ -1,6 +1,3 @@
-#include <iostream>
-#include <vector>
-
 #include "map.h"
 
 Map::Map(int rows, int cols) {

@@ -6,28 +6,41 @@
 #include "map.h"
 #include "event_dispatcher.h"
 
-// TODO eventdispatcher dispatch with data
+
+// den shit hier irgendwoanders hin
+// und vielleicht ne factory für die sensoren? (builder pattern? factory pattern?)
+std::vector<std::unique_ptr<Sensor>> createSensors(EventDispatcher* eventDispatcher) {
+    std::vector<std::unique_ptr<Sensor>> sensors;
+
+    sensors.push_back(std::make_unique<DistanceSensor>(eventDispatcher));
+    
+    return sensors;
+}
+
+// create function to count robots
+
 int main() {
+    std::vector<Robot*> robots;
     EventDispatcher eventDispatcher;
-    // std::vector<Robot> robots;
-    Map map = Map(10, 10);
-   
-    Robot robot1(&map, &eventDispatcher, 0, 0);
+    Map map(10, 10);
 
-    // find a way to put this into Robot class and so it can be dynamic for different robots
-    DistanceSensor distanceSensor(&eventDispatcher);
-    robot1.addSensor(&distanceSensor);
+    // alle robots in nen array und dann an map übergeben, statt den roboter das updaten der map zu überlassen.. oder?
 
-    // robots.push_back(robot1);
+    std::vector<std::unique_ptr<Sensor>> sensors = createSensors(&eventDispatcher);
+    Robot robot1(std::move(sensors), &map, &eventDispatcher, 0, 0);
+
+    robots.push_back(&robot1);
 
     while (true) {
         map.printMap();
-        robot1.printState();
 
-        robot1.updateState();
+        for(auto robot : robots) {
+            robot->printState();
+            robot->updateState();
+        }
 
         // sleep for 1 second
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     return 0;

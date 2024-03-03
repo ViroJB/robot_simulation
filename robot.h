@@ -1,5 +1,10 @@
-#ifndef ROBOT_HPP
-#define ROBOT_HPP
+#ifndef ROBOT_H
+#define ROBOT_H
+
+#include <iostream>
+#include <vector>
+#include <any>
+#include <memory>
 
 #include "i_sensor.h"
 #include "map.h"
@@ -9,15 +14,16 @@
 
 class Robot {
 private:
-    int x, y;
-    Map* map;
-    std::vector<Sensor*> sensors;
-    int direction;
     EventDispatcher* eventDispatcher;
+    std::vector<std::unique_ptr<Sensor>> sensors;
+    int x, y;
+    int direction;
+    Map* map;
+    int mapGridRows;
+    int mapGridCols;
 
 public:
-    Robot(Map* map, EventDispatcher* eventDispatcher, int x, int y);
-    void addSensor(Sensor* sensor);
+    Robot(std::vector<std::unique_ptr<Sensor>>&& sensors, Map* map, EventDispatcher* eventDispatcher, int x, int y);
     std::pair<int, int> getCoordinates();
     void turnLeft();
     void turnTo(int direction);
@@ -28,4 +34,4 @@ public:
     void printState();
 };
 
-#endif // ROBOT_HPP
+#endif // ROBOT_H

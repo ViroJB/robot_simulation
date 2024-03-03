@@ -1,4 +1,4 @@
-#ifndef I_ACTUATOR_HPP
-#define I_ACTUATOR_HPP
+#ifndef I_ACTUATOR_H
+#define I_ACTUATOR_H
 
-#endif // I_ACTUATOR_HPP
+#endif // I_ACTUATOR_H

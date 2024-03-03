@@ -1,6 +1,7 @@
-#ifndef MAP_HPP
-#define MAP_HPP
+#ifndef MAP_H
+#define MAP_H
 
+#include <iostream>
 #include <vector>
 
 class Map {
@@ -15,4 +16,4 @@ class Map {
         void printMap();
 };
 
-#endif // MAP_HPP
+#endif // MAP_H

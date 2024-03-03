@@ -1,12 +1,9 @@
-#include <iostream>
-#include <vector>
-
 #include "robot.h"
 
-Robot::Robot(Map* map, EventDispatcher* eventDispatcher, int x, int y) : map(map), eventDispatcher(eventDispatcher), x(x), y(y), direction(1) {}
-
-void Robot::addSensor(Sensor* sensor) {
-    sensors.push_back(sensor);
+Robot::Robot(std::vector<std::unique_ptr<Sensor>>&& sensors, Map* map, EventDispatcher* eventDispatcher, int x, int y) : sensors(std::move(sensors)), map(map), eventDispatcher(eventDispatcher), x(x), y(y), direction(1) {
+    mapGridRows = map->getGrid().size();
+    mapGridCols = map->getGrid()[0].size();
+    map->drawRobot(x, y);
 }
 
 std::pair<int, int> Robot::getCoordinates() {
@@ -45,18 +42,16 @@ void Robot::turnRandom()
 
 void Robot::move()
 {
-    int rows = map->getGrid().size();
-    int cols = map->getGrid()[0].size();
-
+    // temp
     // change every 20 moves to a random direction
     if(rand() % 20 == 0) {
         std::cout << "Robot is turning randomly" << std::endl;
         turnRandom();
     }
 
-    if(direction == North && y < rows - 1) {
+    if(direction == North && y < mapGridRows - 1) {
         y++;
-    } else if(direction == East && x < cols - 1) {
+    } else if(direction == East && x < mapGridCols - 1) {
         x++;
     } else if(direction == South && y > 0) {
         y--;
@@ -71,37 +66,21 @@ void Robot::move()
 
 void Robot::updateState() {
     move();
+    std::pair<int, int> coordinates = getCoordinates();
+    eventDispatcher->dispatchEvent("RobotChangedPosition", coordinates);
     map->drawRobot(x, y);
 
-    eventDispatcher->dispatchEvent("RobotChangedPosition");
-
-    for (auto sensor : sensors) {
-        // temp stuff
-        DistanceSensor* a = static_cast<DistanceSensor*>(sensor);
-        a->setRobotPosition(x, y);
-
-
+    for (auto &sensor : sensors) {
         sensor->measure();
     }
 }
 
 void Robot::printState() {
     std::cout << "Robot is at: (" << x << ", " << y << ")" << std::endl;
-
-    std::string directionString;
-    if(direction == North) {
-        directionString = "North";
-    } else if(direction == East) {
-        directionString = "East";
-    } else if(direction == South) {
-        directionString = "South";
-    } else if(direction == West) {
-        directionString = "West";
-    }
-    std::cout << "Robot is facing: " << directionString << std::endl;
+    std::cout << "Robot is facing: " << direction << std::endl;
 
     std::cout << "Robot has " << sensors.size() << " sensors." << std::endl;
-    for (auto sensor : sensors) {
+    for (auto &sensor : sensors) {
         std::cout << sensor->getId() << " Data: " << sensor->getData() << std::endl;
     }
 }
