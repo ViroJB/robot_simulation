@@ -1,7 +1,8 @@
 #ifndef CARDINAL_DIRECTIONS_H
 #define CARDINAL_DIRECTIONS_H
 
-enum CardinalDirection {
+enum CardinalDirection
+{
     North = 0,
     East = 1,
     South = 2,

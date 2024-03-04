@@ -3,10 +3,13 @@
 
 #include <string>
 
-class Sensor {
+class Sensor
+{
 private:
     std::string id;
+
 public:
+    virtual void attachTo(std::string id) = 0;
     virtual void measure() = 0;
     virtual int getData() = 0;
     virtual std::string getId() = 0;

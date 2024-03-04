@@ -11,19 +11,23 @@
 #include "distance_sensor.h"
 #include "event_dispatcher.h"
 
-class Robot {
+class Robot
+{
 private:
-    EventDispatcher* eventDispatcher;
+    EventDispatcher *eventDispatcher;
     std::vector<std::unique_ptr<Sensor>> sensors;
+    std::string id;
     int x, y;
     int direction;
     int mapSizeX;
     int mapSizeY;
 
 public:
-    Robot(std::vector<std::unique_ptr<Sensor>>&& sensors, EventDispatcher* eventDispatcher, int x, int y, int mapSizeX, int mapSizeY);
+    Robot(std::vector<std::unique_ptr<Sensor>> &&sensors, EventDispatcher *eventDispatcher, std::string id, int x, int y, int mapSizeX, int mapSizeY);
     std::pair<int, int> getCoordinates();
+    void initSensors(std::string id);
     void setPosition(int x, int y);
+    void setId(std::string id);
     void turnLeft();
     void turnTo(int direction);
     void turnRight();
