@@ -13,29 +13,35 @@ std::vector<std::unique_ptr<Sensor>> createSensors(EventDispatcher* eventDispatc
     std::vector<std::unique_ptr<Sensor>> sensors;
 
     sensors.push_back(std::make_unique<DistanceSensor>(eventDispatcher));
-    
+
     return sensors;
 }
 
-// create function to count robots
 
 int main() {
+
+    int mapSizeX = 10;
+    int mapSizeY = 10;
+
     std::vector<Robot*> robots;
     EventDispatcher eventDispatcher;
-    Map map(10, 10);
-
-    // alle robots in nen array und dann an map übergeben, statt den roboter das updaten der map zu überlassen.. oder?
+    Map map(&robots, mapSizeX, mapSizeY);
 
     std::vector<std::unique_ptr<Sensor>> sensors = createSensors(&eventDispatcher);
-    Robot robot1(std::move(sensors), &map, &eventDispatcher, 0, 0);
+    Robot robot1(std::move(sensors), &eventDispatcher, 0, 0, mapSizeX, mapSizeY);
+
+    std::vector<std::unique_ptr<Sensor>> sensors2 = createSensors(&eventDispatcher);
+    Robot robot2(std::move(sensors2), &eventDispatcher, 3, 3, mapSizeX, mapSizeY);
 
     robots.push_back(&robot1);
+    robots.push_back(&robot2);
+    
 
     while (true) {
         map.printMap();
 
         for(auto robot : robots) {
-            robot->printState();
+            // robot->printState();
             robot->updateState();
         }
 

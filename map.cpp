@@ -1,18 +1,25 @@
 #include "map.h"
 
-Map::Map(int rows, int cols) {
+Map::Map(std::vector<Robot*>* robots, int rows, int cols) {
     grid.resize(rows, std::vector<char>(cols, '.'));
+    // get first robot from robots vector
+    this->robots = robots;
 }
 
 std::vector<std::vector<char>> Map::getGrid() {
     return grid;
 }
 
-void Map::drawRobot(int x, int y) {
-    if (x >= 0 && x < grid.size() && y >= 0 && y < grid[0].size()) {
-        resetMap();
-        grid[x][y] = 'R';
+void Map::drawRobots(std::vector<Robot*>* robots) {
+    for (auto robot : *robots) {
+        std::pair<int, int> coordinates = robot->getCoordinates();
+        grid[coordinates.first][coordinates.second] = 'R';
     }
+}
+
+void Map::prepareMap() {
+    resetMap();
+    drawRobots(robots);
 }
 
 void Map::resetMap() {
@@ -24,6 +31,7 @@ void Map::resetMap() {
 }
 
 void Map::printMap() {
+    prepareMap();
     for (const auto& row : grid) {
         for (const auto& cell : row) {
             std::cout << cell << ' ';

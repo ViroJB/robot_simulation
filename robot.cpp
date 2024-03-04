@@ -1,13 +1,16 @@
 #include "robot.h"
 
-Robot::Robot(std::vector<std::unique_ptr<Sensor>>&& sensors, Map* map, EventDispatcher* eventDispatcher, int x, int y) : sensors(std::move(sensors)), map(map), eventDispatcher(eventDispatcher), x(x), y(y), direction(1) {
-    mapGridRows = map->getGrid().size();
-    mapGridCols = map->getGrid()[0].size();
-    map->drawRobot(x, y);
+Robot::Robot(std::vector<std::unique_ptr<Sensor>>&& sensors, EventDispatcher* eventDispatcher, int x, int y, int mapSizeX, int mapSizeY) : sensors(std::move(sensors)), eventDispatcher(eventDispatcher), x(x), y(y), mapSizeX(mapSizeX), mapSizeY(mapSizeY), direction(1) {
+    x, y = 0;
 }
 
 std::pair<int, int> Robot::getCoordinates() {
     return std::make_pair(x, y);
+}
+
+void Robot::setPosition(int x, int y) {
+    this->x = x;
+    this->y = y;
 }
 
 void Robot::turnRight()
@@ -49,9 +52,9 @@ void Robot::move()
         turnRandom();
     }
 
-    if(direction == North && y < mapGridRows - 1) {
+    if(direction == North && y < mapSizeX - 1) {
         y++;
-    } else if(direction == East && x < mapGridCols - 1) {
+    } else if(direction == East && x < mapSizeY - 1) {
         x++;
     } else if(direction == South && y > 0) {
         y--;
@@ -68,7 +71,6 @@ void Robot::updateState() {
     move();
     std::pair<int, int> coordinates = getCoordinates();
     eventDispatcher->dispatchEvent("RobotChangedPosition", coordinates);
-    map->drawRobot(x, y);
 
     for (auto &sensor : sensors) {
         sensor->measure();
