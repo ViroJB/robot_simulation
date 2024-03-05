@@ -3,20 +3,19 @@
 
 #include <iostream>
 
+#include "../event_dispatcher/event_dispatcher.h"
 #include "i_sensor.h"
-#include "event_dispatcher.h"
 
-class DistanceSensor : public Sensor
-{
-private:
-    std::string id = "DistanceSensor";
-    std::string attachedTo;
-    int distance;
-    int targetX, targetY;
-    int robotX, robotY;
-    EventDispatcher *eventDispatcher;
+class DistanceSensor : public ISensor {
+   private:
+    std::string _id = "DistanceSensor";
+    std::string _attachedTo;
+    int _distance;
+    int _targetX, _targetY;
+    int _robotX, _robotY;
+    EventDispatcher *_eventDispatcher;
 
-public:
+   public:
     DistanceSensor(EventDispatcher *eventDispatcher);
 
     void attachTo(std::string id);
@@ -28,4 +27,4 @@ public:
     std::string getId();
 };
 
-#endif // DISTANCE_SENSOR_H
+#endif  // DISTANCE_SENSOR_H

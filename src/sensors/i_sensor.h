@@ -3,17 +3,16 @@
 
 #include <string>
 
-class Sensor
-{
-private:
-    std::string id;
+class ISensor {
+   private:
+    std::string _id;
 
-public:
+   public:
     virtual void attachTo(std::string id) = 0;
     virtual void measure() = 0;
     virtual int getData() = 0;
     virtual std::string getId() = 0;
-    virtual ~Sensor() {}
+    virtual ~ISensor() {}
 };
 
-#endif // I_SENSOR_H
+#endif  // I_SENSOR_H

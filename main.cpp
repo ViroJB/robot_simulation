@@ -1,33 +1,22 @@
 #include <thread>
 #include <vector>
 
-#include "robot.h"
-#include "distance_sensor.h"
-#include "map.h"
-#include "event_dispatcher.h"
-
-// den shit hier irgendwoanders hin
-// und vielleicht ne factory für die sensoren? (builder pattern? factory pattern?)
-std::vector<std::unique_ptr<Sensor>> createSensors(EventDispatcher *eventDispatcher)
-{
-    std::vector<std::unique_ptr<Sensor>> sensors;
-
-    sensors.push_back(std::make_unique<DistanceSensor>(eventDispatcher));
-
-    return sensors;
-}
+#include "src/event_dispatcher/event_dispatcher.h"
+#include "src/map/map.h"
+#include "src/robots/robot.h"
+#include "src/sensors/sensors.h"
 
 // NEXT UP:
-// hmmmmm
-int main()
-{
+// zeug in die richtigen ordner verschieben
+int main() {
     std::vector<Robot *> robots;
     EventDispatcher eventDispatcher;
     int mapSizeX = 10;
     int mapSizeY = 10;
     Map map(&robots, mapSizeX, mapSizeY);
 
-    std::vector<std::unique_ptr<Sensor>> sensors;
+    // robot stuff
+    std::vector<std::unique_ptr<ISensor>> sensors;
     // robot 1
     sensors = createSensors(&eventDispatcher);
     Robot robot1(std::move(sensors), &eventDispatcher, "Robot1", 0, 0, mapSizeX, mapSizeY);
@@ -46,15 +35,13 @@ int main()
     robots.push_back(&robot3);
     robots.push_back(&robot4);
 
-    while (true)
-    {
+    while (true) {
         map.printMap();
 
-        for (auto robot : robots)
-        {
-            #if DEBUG
-                robot->printState();
-            #endif
+        for (auto robot : robots) {
+#if DEBUG
+            robot->printState();
+#endif
             robot->updateState();
         }
 
