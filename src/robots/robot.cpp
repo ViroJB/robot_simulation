@@ -54,9 +54,7 @@ void Robot::move() {
     // temp
     // change every 20 moves to a random direction
     if (rand() % 20 == 0) {
-#if DEBUG
-        std::cout << _id << ": turning randomly" << std::endl;
-#endif
+        DEBUG_MSG(_id << ": turning randomly");
         turnRandom();
     }
 
@@ -69,9 +67,7 @@ void Robot::move() {
     } else if (_direction == West && _x > 0) {
         --_x;
     } else {
-#if DEBUG
-        std::cout << _id << ": cannot move in that direction. Turning." << std::endl;
-#endif
+        DEBUG_MSG(_id << ": cannot move in that direction. Turning.");
         turnRandom();
         move();
     }

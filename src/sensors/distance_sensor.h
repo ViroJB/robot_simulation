@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include "../debug.h"
 #include "../event_dispatcher/event_dispatcher.h"
 #include "i_sensor.h"
 

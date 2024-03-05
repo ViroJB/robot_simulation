@@ -11,17 +11,13 @@ void DistanceSensor::attachTo(std::string id) {
 
 void DistanceSensor::eventTriggered(const std::any &data) {
     if (!data.has_value()) {
-#if DEBUG
-        std::cout << _attachedTo << ": " << _id << ": missing event data." << std::endl;
-#endif
+        DEBUG_MSG(_attachedTo << ": " << _id << ": missing event data.");
         return;
     }
 
     std::pair<int, int> newCoordinates = std::any_cast<std::pair<int, int>>(data);
     setRobotPosition(newCoordinates.first, newCoordinates.second);
-#if DEBUG
-    std::cout << _attachedTo << ": " << _id << ": position updated." << std::endl;
-#endif
+    DEBUG_MSG(_attachedTo << ": " << _id << ": position updated.");
 }
 
 void DistanceSensor::setTargetPosition(int x, int y) {

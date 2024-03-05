@@ -1,13 +1,15 @@
 #include <thread>
 #include <vector>
 
+#include "src/debug.h"
 #include "src/event_dispatcher/event_dispatcher.h"
 #include "src/map/map.h"
 #include "src/robots/robot.h"
 #include "src/sensors/sensors.h"
 
+
 // NEXT UP:
-// zeug in die richtigen ordner verschieben
+// items?
 int main() {
     std::vector<Robot *> robots;
     EventDispatcher eventDispatcher;
@@ -39,7 +41,7 @@ int main() {
         map.printMap();
 
         for (auto robot : robots) {
-#if DEBUG
+#ifdef DEBUG
             robot->printState();
 #endif
             robot->updateState();

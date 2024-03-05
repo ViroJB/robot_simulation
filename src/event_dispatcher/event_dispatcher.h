@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "../debug.h"
+
 class EventDispatcher {
    private:
     using EventHandler = std::function<void(const std::any &)>;
@@ -27,9 +29,8 @@ void EventDispatcher::dispatchEvent(const std::string &eventName, const T &data)
     auto it = _eventHandlers.find(eventName);
 
     if (it != _eventHandlers.end()) {
-#if DEBUG
-        std::cout << "Dispatching event: " << eventName << std::endl;
-#endif
+        DEBUG_MSG("Dispatching event: " << eventName);
+        
         for (const auto &handler : it->second) {
             handler(data);
         }

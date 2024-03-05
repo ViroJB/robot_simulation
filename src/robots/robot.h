@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 
+#include "../debug.h"
 #include "../directions.h"
 #include "../sensors/i_sensor.h"
 #include "../sensors/distance_sensor.h"
