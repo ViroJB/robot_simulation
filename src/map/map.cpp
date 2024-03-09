@@ -1,21 +1,30 @@
 #include "map.h"
 
-Map::Map(std::vector<Robot *> *robots, int rows, int cols) {
-    _grid.resize(rows, std::vector<char>(cols, '.'));
+Map::Map(std::pair<int, int> mapSize, std::vector<Robot *> *robots, std::vector<std::unique_ptr<IItem>> *items) {
+    _grid.resize(mapSize.first, std::vector<char>(mapSize.second, '.'));
     this->_robots = robots;
+    this->_items = items;
 }
 
 std::vector<std::vector<char>> Map::getGrid() { return _grid; }
 
 void Map::drawRobots(std::vector<Robot *> *robots) {
     for (auto robot : *robots) {
-        std::pair<int, int> coordinates = robot->getCoordinates();
+        std::pair<int, int> coordinates = robot->getPosition();
         _grid[coordinates.first][coordinates.second] = 'R';
+    }
+}
+
+void Map::drawItems(std::vector<std::unique_ptr<IItem>> *items) {
+    for (auto &item : *items) {
+        std::pair<int, int> coordinates = item->getPosition();
+        _grid[coordinates.first][coordinates.second] = 'I';
     }
 }
 
 void Map::prepareMap() {
     resetMap();
+    drawItems(_items);
     drawRobots(_robots);
 }
 

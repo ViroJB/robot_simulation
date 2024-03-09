@@ -8,6 +8,7 @@ class ISensor {
     std::string _id;
 
    public:
+    virtual void setEventDispatcher(EventDispatcher *eventDispatcher) = 0;
     virtual void attachTo(std::string id) = 0;
     virtual void measure() = 0;
     virtual int getData() = 0;

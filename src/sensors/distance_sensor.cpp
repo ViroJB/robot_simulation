@@ -1,7 +1,8 @@
 #include "distance_sensor.h"
 
-DistanceSensor::DistanceSensor(EventDispatcher *eventDispatcher)
-    : _distance(0), _robotX(0), _robotY(0), _targetX(9), _targetY(9), _eventDispatcher(eventDispatcher) {}
+DistanceSensor::DistanceSensor()
+    // TODO change...
+    : _distance(0), _robotX(0), _robotY(0), _targetX(9), _targetY(9) {}
 
 void DistanceSensor::attachTo(std::string id) {
     _attachedTo = id;
@@ -9,10 +10,15 @@ void DistanceSensor::attachTo(std::string id) {
                                       [this](const std::any &data) { this->eventTriggered(data); });
 }
 
+void DistanceSensor::setEventDispatcher(EventDispatcher *eventDispatcher) {
+    _eventDispatcher = eventDispatcher;
+}
+
 void DistanceSensor::eventTriggered(const std::any &data) {
     if (!data.has_value()) {
         DEBUG_MSG(_attachedTo << ": " << _id << ": missing event data.");
         return;
+        
     }
 
     std::pair<int, int> newCoordinates = std::any_cast<std::pair<int, int>>(data);

@@ -9,11 +9,11 @@
 #include "distance_sensor.h"
 
 // vielleicht ne factory für die sensoren? (builder pattern? factory pattern?)
-std::vector<std::unique_ptr<ISensor>> createSensors(EventDispatcher *eventDispatcher)
+std::vector<std::unique_ptr<ISensor>> createSensors()
 {
     std::vector<std::unique_ptr<ISensor>> sensors;
 
-    sensors.push_back(std::make_unique<DistanceSensor>(eventDispatcher));
+    sensors.push_back(std::make_unique<DistanceSensor>());
 
     return sensors;
 }

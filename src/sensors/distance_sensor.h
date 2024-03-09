@@ -17,8 +17,9 @@ class DistanceSensor : public ISensor {
     EventDispatcher *_eventDispatcher;
 
    public:
-    DistanceSensor(EventDispatcher *eventDispatcher);
+    DistanceSensor();
 
+    void setEventDispatcher(EventDispatcher *eventDispatcher);
     void attachTo(std::string id);
     void eventTriggered(const std::any &data);
     void measure();
