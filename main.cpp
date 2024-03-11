@@ -1,23 +1,29 @@
 #include <thread>
 #include <vector>
+#include <map>
 
 #include "src/debug.h"
 #include "src/event_dispatcher/event_dispatcher.h"
-#include "src/items/cube.h"
 #include "src/items/i_item.h"
+#include "src/items/cube.h"
+#include "src/items/item_manager.h"
 #include "src/map/map.h"
 #include "src/robots/robot.h"
 #include "src/sensors/sensors.h"
 #include "src/collision_detection/collision_detection.h"
 
+// shared pointer weil mehrfach items pointer uebergeben?
 
 // NEXT UP:
 // items?
 int main() {
-    std::vector<std::unique_ptr<IItem>> items;
+    std::map<std::string, std::unique_ptr<IItem>> items;
     std::unique_ptr<Cube> cube = std::make_unique<Cube>();
     cube->setPosition(0, 7);
-    items.push_back(std::move(cube));
+    items.insert(std::make_pair(cube->getId(), std::move(cube)));
+
+    ItemManager itemManager;
+    itemManager.setItems(&items);
 
     std::vector<Robot *> robots;
     EventDispatcher eventDispatcher;
@@ -34,18 +40,22 @@ int main() {
     sensors = createSensors();
     Robot robot1(std::move(sensors), &eventDispatcher, "Robot1", &collisionDetection);
     robot1.setPosition(0, 0);
+    robot1.setItemManager(&itemManager);
     // robot 2
     sensors = createSensors();
     Robot robot2(std::move(sensors), &eventDispatcher, "Robot2", &collisionDetection);
     robot2.setPosition(3, 3);
+    robot2.setItemManager(&itemManager);
     // robot 3
     sensors = createSensors();
     Robot robot3(std::move(sensors), &eventDispatcher, "Robot3", &collisionDetection);
     robot3.setPosition(6, 6);
+    robot3.setItemManager(&itemManager);
     // robot 4
     sensors = createSensors();
     Robot robot4(std::move(sensors), &eventDispatcher, "Robot4", &collisionDetection);
     robot4.setPosition(7, 7);
+    robot4.setItemManager(&itemManager);
 
     robots.push_back(&robot1);
     robots.push_back(&robot2);

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 
 class Robot;
 #include "../items/i_item.h"
@@ -13,14 +14,14 @@ class CollisionDetection {
    public:
     CollisionDetection();
     void setRobots(std::vector<Robot *> *robots);
-    void setItems(std::vector<std::unique_ptr<IItem>> *items);
+    void setItems(std::map<std::string, std::unique_ptr<IItem>> *items);
     void setMapSize(std::pair<int, int> mapSize);
-    bool canRobotMoveTo(int x, int y, std::string robotId);
-    bool findItem(int x, int y);
+    bool canRobotMoveTo(std::string robotId, int x, int y);
+    std::unique_ptr<IItem> findItem(int x, int y);
 
    private:
     std::vector<Robot *> *_robots;
-    std::vector<std::unique_ptr<IItem>> *_items;
+    std::map<std::string, std::unique_ptr<IItem>> *_items;
     std::pair<int, int> _mapSize;
 };
 

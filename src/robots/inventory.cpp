@@ -1,8 +1,11 @@
 #include "inventory.h"
 
 Inventory::Inventory() {
+    _items = new std::map<std::string, std::unique_ptr<IItem>>;
 }
 
-void Inventory::addItem(std::unique_ptr<IItem> item) {
-    _items.push_back(std::move(item));
+void Inventory::addItem(IItem *item) {
+    std::cout << "Inventory Size before: " << _items->size() << std::endl;
+    _items->emplace(item->getId(), std::unique_ptr<IItem>(item));
+    std::cout << "Inventory Size after: " << _items->size() << std::endl;
 }

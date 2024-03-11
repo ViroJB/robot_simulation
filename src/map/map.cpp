@@ -1,9 +1,9 @@
 #include "map.h"
 
-Map::Map(std::pair<int, int> mapSize, std::vector<Robot *> *robots, std::vector<std::unique_ptr<IItem>> *items) {
+Map::Map(std::pair<int, int> mapSize, std::vector<Robot *> *robots, std::map<std::string, std::unique_ptr<IItem>> *items) {
     _grid.resize(mapSize.first, std::vector<char>(mapSize.second, '.'));
-    this->_robots = robots;
-    this->_items = items;
+    _robots = robots;
+    _items = items;
 }
 
 std::vector<std::vector<char>> Map::getGrid() { return _grid; }
@@ -15,9 +15,9 @@ void Map::drawRobots(std::vector<Robot *> *robots) {
     }
 }
 
-void Map::drawItems(std::vector<std::unique_ptr<IItem>> *items) {
+void Map::drawItems(std::map<std::string, std::unique_ptr<IItem>> *items) {
     for (auto &item : *items) {
-        std::pair<int, int> coordinates = item->getPosition();
+        std::pair<int, int> coordinates = item.second->getPosition();
         _grid[coordinates.first][coordinates.second] = 'I';
     }
 }

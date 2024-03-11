@@ -1,5 +1,7 @@
 #include "robot.h"
+
 #include "../collision_detection/collision_detection.h"
+#include "../items/item_manager.h"
 
 Robot::Robot(std::vector<std::unique_ptr<ISensor>> &&sensors, EventDispatcher *eventDispatcher, std::string id,
              CollisionDetection *collisionDetection)
@@ -18,6 +20,8 @@ void Robot::initSensors(std::string id) {
     }
 }
 
+void Robot::setItemManager(ItemManager *itemManager) { _itemManager = itemManager; }
+
 std::pair<int, int> Robot::getPosition() { return std::make_pair(_x, _y); }
 
 std::string Robot::getId() { return _id; }
@@ -29,38 +33,37 @@ void Robot::setPosition(int x, int y) {
     this->_y = y;
 }
 
-void Robot::turnRight() {
-    if (_direction == West) {
-        _direction = North;
+void Robot::turn(int direction) {
+    // return if direction is bigger than the size of the enum Directions
+    if (direction > 6) {
+        return;
+    }
+
+    if (direction == Left) {
+        if (_direction == North) {
+            _direction = West;
+        } else {
+            --_direction;
+        }
+    } else if (direction == Right) {
+        if (_direction == West) {
+            _direction = North;
+        } else {
+            ++_direction;
+        }
+    } else if (direction == Random) {
+        _direction = rand() % 4;
     } else {
-        ++_direction;
+        _direction = direction;
     }
 }
-
-void Robot::turnLeft() {
-    if (_direction == North) {
-        _direction = West;
-    } else {
-        --_direction;
-    }
-}
-
-void Robot::turnTo(int direction) {
-    if (direction >= 0 && direction <= 3) {
-        this->_direction = direction;
-    }
-}
-
-void Robot::turnRandom() { turnTo(rand() % 4); }
-
-
 
 void Robot::move() {
     // temp
     // change every 20 moves to a random direction
     if (rand() % 20 == 0) {
         DEBUG_MSG(_id << ": turning randomly");
-        turnTo(rand() % 4);
+        turn(Random);
     }
 
     if (_direction == North) {
@@ -69,29 +72,31 @@ void Robot::move() {
         ++_x;
     } else if (_direction == South) {
         --_y;
-    // West
+        // West
     } else {
         --_x;
     }
 }
 
 void Robot::updateState() {
-
     int oldX = _x;
     int oldY = _y;
 
     move();
 
-    while(!_collisionDetection->canRobotMoveTo(_x, _y, _id)) {
+    while (!_collisionDetection->canRobotMoveTo(_id, _x, _y)) {
         DEBUG_MSG(_id << ": Next move not possible. Trying a different move." << std::endl);
         _x = oldX;
         _y = oldY;
-        turnTo(rand() % 4);
+        turn(Right);
         move();
     }
 
-    if(_collisionDetection->findItem(_x, _y)) {
-        std::cout << _id << ": Item found!" << std::endl;
+    std::unique_ptr<IItem> item = _collisionDetection->findItem(_x, _y);
+    if (item != nullptr) {
+        // remove item from items after its being moved
+        _itemManager->removeItem(item->getId());
+        _itemManager->moveItemToRobot(this, item.get());
     }
 
     std::pair<int, int> coordinates = getPosition();
@@ -100,9 +105,9 @@ void Robot::updateState() {
     for (auto &sensor : _sensors) {
         sensor->measure();
     }
-#ifdef DEBUG
-    printState();
-#endif
+    #ifdef DEBUG
+        printState();
+    #endif
 }
 
 void Robot::printState() {
