@@ -11,6 +11,7 @@ class Inventory {
    public:
     Inventory();
     void addItem(IItem *item);
+    IItem* moveItem(std::string id);
     //void removeItem(std::string id);
 
    private:

@@ -14,7 +14,7 @@ class ItemManager {
     void setItems(std::map<std::string, std::unique_ptr<IItem>> *items);
     // void addItem(IItem *item);
     void removeItem(std::string id);
-    void moveItemToRobot(Robot *robot, IItem *item);
+    void moveItemToRobot(std::string itemId, Robot *robot);
     // void removeItemFromRobot(Robot *robot, IItem *item);
 
    private:

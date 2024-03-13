@@ -4,7 +4,9 @@
 CollisionDetection::CollisionDetection() {
 }
 
-void CollisionDetection::setRobots(std::vector<Robot *> *robots) { _robots = robots; }
+// TODO add checks for empty/not set maps
+
+void CollisionDetection::setRobots(std::map<std::string, std::unique_ptr<Robot>> *robots) { _robots = robots; }
 
 void CollisionDetection::setItems(std::map<std::string, std::unique_ptr<IItem>> *items) {
     _items = items;
@@ -15,7 +17,7 @@ void CollisionDetection::setMapSize(std::pair<int, int> mapSize) { _mapSize = ma
 bool CollisionDetection::canRobotMoveTo(std::string robotId, int x, int y) {
     // is another robot on this position?
     for (auto &robot : *_robots) {
-        if (robot->getId() != robotId && robot->getPosition().first == x && robot->getPosition().second == y) {
+        if (robot.second->getId() != robotId && robot.second->getPosition().first == x && robot.second->getPosition().second == y) {
             return false;
         }
     }
@@ -28,15 +30,11 @@ bool CollisionDetection::canRobotMoveTo(std::string robotId, int x, int y) {
     return true;
 }
 
-
-// muss das hier sein? oder direkt im robot?
-std::unique_ptr<IItem> CollisionDetection::findItem(int x, int y) {
+std::string CollisionDetection::findItem(int x, int y) {
     for (auto &item : *_items) {
         if (item.second->getPosition().first == x && item.second->getPosition().second == y) {
-            std::cout << "Item found, id: " << item.second->getId() << std::endl;
-            return std::move(item.second);
+            return item.first;
         }
     }
-    // return a null/empty object if no item was found
-    return nullptr;
+    return "";
 }

@@ -1,16 +1,19 @@
 #include "map.h"
 
-Map::Map(std::pair<int, int> mapSize, std::vector<Robot *> *robots, std::map<std::string, std::unique_ptr<IItem>> *items) {
+Map::Map(std::pair<int, int> mapSize, std::map<std::string, std::unique_ptr<Robot>> *robots, std::map<std::string, std::unique_ptr<IItem>> *items) {
     _grid.resize(mapSize.first, std::vector<char>(mapSize.second, '.'));
     _robots = robots;
     _items = items;
 }
 
+// TODO add checks for empty/not set maps
+
+
 std::vector<std::vector<char>> Map::getGrid() { return _grid; }
 
-void Map::drawRobots(std::vector<Robot *> *robots) {
-    for (auto robot : *robots) {
-        std::pair<int, int> coordinates = robot->getPosition();
+void Map::drawRobots(std::map<std::string, std::unique_ptr<Robot>> *robots) {
+    for (auto &robot : *robots) {
+        std::pair<int, int> coordinates = robot.second->getPosition();
         _grid[coordinates.first][coordinates.second] = 'R';
     }
 }

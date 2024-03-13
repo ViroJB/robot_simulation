@@ -3,22 +3,21 @@
 #include "../collision_detection/collision_detection.h"
 #include "../items/item_manager.h"
 
-Robot::Robot(std::vector<std::unique_ptr<ISensor>> &&sensors, EventDispatcher *eventDispatcher, std::string id,
-             CollisionDetection *collisionDetection)
-    : _sensors(std::move(sensors)),
-      _eventDispatcher(eventDispatcher),
-      _collisionDetection(collisionDetection),
-      _id(id),
-      _direction(1) {
-    initSensors(id);
+Robot::Robot(std::string id, EventDispatcher *eventDispatcher) : _id(id), _eventDispatcher(eventDispatcher) {}
+
+void Robot::setSensors(std::vector<std::unique_ptr<ISensor>> &&sensors) {
+    _sensors = std::move(sensors);
+    initSensors();
 }
 
-void Robot::initSensors(std::string id) {
+void Robot::initSensors() {
     for (auto &sensor : _sensors) {
         sensor->setEventDispatcher(_eventDispatcher);
-        sensor->attachTo(id);
+        sensor->attachTo(_id);
     }
 }
+
+void Robot::setCollisionDetection(CollisionDetection *collisionDetection) { _collisionDetection = collisionDetection; }
 
 void Robot::setItemManager(ItemManager *itemManager) { _itemManager = itemManager; }
 
@@ -29,8 +28,8 @@ std::string Robot::getId() { return _id; }
 Inventory Robot::getInventory() { return _inventory; }
 
 void Robot::setPosition(int x, int y) {
-    this->_x = x;
-    this->_y = y;
+    _x = x;
+    _y = y;
 }
 
 void Robot::turn(int direction) {
@@ -60,8 +59,8 @@ void Robot::turn(int direction) {
 
 void Robot::move() {
     // temp
-    // change every 20 moves to a random direction
-    if (rand() % 20 == 0) {
+    // change every 15 moves to a random direction
+    if (rand() % 15 == 0) {
         DEBUG_MSG(_id << ": turning randomly");
         turn(Random);
     }
@@ -81,22 +80,27 @@ void Robot::move() {
 void Robot::updateState() {
     int oldX = _x;
     int oldY = _y;
-
     move();
-
+    int i = 0;
     while (!_collisionDetection->canRobotMoveTo(_id, _x, _y)) {
-        DEBUG_MSG(_id << ": Next move not possible. Trying a different move." << std::endl);
+        // TODO redo this...
+        DEBUG_MSG(_id << ": Next move (" << _x << ", " << _y << ") not possible. Trying a different move." << std::endl);
         _x = oldX;
         _y = oldY;
-        turn(Right);
+        // jump out of loop if robot tries to move more than 10 times
+        if(i > 10) {
+            DEBUG_MSG(_id << ": No possible moves. Staying in place." << std::endl);
+            break;
+        }
+        turn(Random);
         move();
+        i++;
     }
 
-    std::unique_ptr<IItem> item = _collisionDetection->findItem(_x, _y);
-    if (item != nullptr) {
-        // remove item from items after its being moved
-        _itemManager->removeItem(item->getId());
-        _itemManager->moveItemToRobot(this, item.get());
+    std::string itemId = _collisionDetection->findItem(_x, _y);
+    // if item is found
+    if (!itemId.empty()) {
+        _itemManager->moveItemToRobot(itemId, this);
     }
 
     std::pair<int, int> coordinates = getPosition();
@@ -105,9 +109,9 @@ void Robot::updateState() {
     for (auto &sensor : _sensors) {
         sensor->measure();
     }
-    #ifdef DEBUG
-        printState();
-    #endif
+#ifdef DEBUG
+    printState();
+#endif
 }
 
 void Robot::printState() {

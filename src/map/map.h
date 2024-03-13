@@ -12,13 +12,13 @@
 class Map {
    private:
     std::vector<std::vector<char>> _grid;
-    std::vector<Robot *> *_robots;
+    std::map<std::string, std::unique_ptr<Robot>> *_robots;
     std::map<std::string, std::unique_ptr<IItem>> *_items;
 
    public:
-    Map(std::pair<int, int> mapSize, std::vector<Robot *> *robots, std::map<std::string, std::unique_ptr<IItem>> *items);
+    Map(std::pair<int, int> mapSize, std::map<std::string, std::unique_ptr<Robot>> *robots, std::map<std::string, std::unique_ptr<IItem>> *items);
     std::vector<std::vector<char>> getGrid();
-    void drawRobots(std::vector<Robot *> *robots);
+    void drawRobots(std::map<std::string, std::unique_ptr<Robot>> *robots);
     void drawItems(std::map<std::string, std::unique_ptr<IItem>> *items);
     void prepareMap();
     void resetMap();

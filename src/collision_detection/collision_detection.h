@@ -13,14 +13,14 @@ class Robot;
 class CollisionDetection {
    public:
     CollisionDetection();
-    void setRobots(std::vector<Robot *> *robots);
+    void setRobots(std::map<std::string, std::unique_ptr<Robot>> *robots);
     void setItems(std::map<std::string, std::unique_ptr<IItem>> *items);
     void setMapSize(std::pair<int, int> mapSize);
     bool canRobotMoveTo(std::string robotId, int x, int y);
-    std::unique_ptr<IItem> findItem(int x, int y);
+    std::string findItem(int x, int y);
 
    private:
-    std::vector<Robot *> *_robots;
+    std::map<std::string, std::unique_ptr<Robot>> *_robots;
     std::map<std::string, std::unique_ptr<IItem>> *_items;
     std::pair<int, int> _mapSize;
 };

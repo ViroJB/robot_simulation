@@ -5,7 +5,11 @@ Inventory::Inventory() {
 }
 
 void Inventory::addItem(IItem *item) {
-    std::cout << "Inventory Size before: " << _items->size() << std::endl;
     _items->emplace(item->getId(), std::unique_ptr<IItem>(item));
-    std::cout << "Inventory Size after: " << _items->size() << std::endl;
+}
+
+IItem* Inventory::moveItem(std::string id) {
+    IItem* item = std::move(_items->at(id).get());
+    _items->erase(id);
+    return item;
 }
