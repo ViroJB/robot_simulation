@@ -18,7 +18,6 @@ void DistanceSensor::eventTriggered(const std::any &data) {
     if (!data.has_value()) {
         DEBUG_MSG(_attachedTo << ": " << _id << ": missing event data.");
         return;
-        
     }
 
     std::pair<int, int> newCoordinates = std::any_cast<std::pair<int, int>>(data);

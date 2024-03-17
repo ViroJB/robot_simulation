@@ -3,33 +3,30 @@
 #include "../collision_detection/collision_detection.h"
 #include "../items/item_manager.h"
 
-Robot::Robot(std::string id, EventDispatcher *eventDispatcher) : _id(id), _eventDispatcher(eventDispatcher) {}
+Robot::Robot(std::string id, EventDispatcher *eventDispatcher) : _id(id), _eventDispatcher(eventDispatcher) {
+    // TODO remove
+    _targets.push_back(std::make_pair(0, 7));
+}
 
+void Robot::setCollisionDetection(CollisionDetection *collisionDetection) { _collisionDetection = collisionDetection; }
+void Robot::setItemManager(ItemManager *itemManager) { _itemManager = itemManager; }
+void Robot::setPosition(int x, int y) {
+    _x = x;
+    _y = y;
+}
 void Robot::setSensors(std::vector<std::unique_ptr<ISensor>> &&sensors) {
     _sensors = std::move(sensors);
     initSensors();
 }
+std::pair<int, int> Robot::getPosition() { return std::make_pair(_x, _y); }
+std::string Robot::getId() { return _id; }
+Inventory Robot::getInventory() { return _inventory; }
 
 void Robot::initSensors() {
     for (auto &sensor : _sensors) {
         sensor->setEventDispatcher(_eventDispatcher);
         sensor->attachTo(_id);
     }
-}
-
-void Robot::setCollisionDetection(CollisionDetection *collisionDetection) { _collisionDetection = collisionDetection; }
-
-void Robot::setItemManager(ItemManager *itemManager) { _itemManager = itemManager; }
-
-std::pair<int, int> Robot::getPosition() { return std::make_pair(_x, _y); }
-
-std::string Robot::getId() { return _id; }
-
-Inventory Robot::getInventory() { return _inventory; }
-
-void Robot::setPosition(int x, int y) {
-    _x = x;
-    _y = y;
 }
 
 void Robot::turn(int direction) {
@@ -58,7 +55,7 @@ void Robot::turn(int direction) {
 }
 
 void Robot::move() {
-    // temp
+    // TODO remove this random thingy
     // change every 15 moves to a random direction
     if (rand() % 15 == 0) {
         DEBUG_MSG(_id << ": turning randomly");
@@ -77,18 +74,43 @@ void Robot::move() {
     }
 }
 
+void Robot::moveTo(std::pair<int, int> coordinates) {
+    _x = coordinates.first;
+    _y = coordinates.second;
+}
+
 void Robot::updateState() {
+
     int oldX = _x;
     int oldY = _y;
-    move();
+
+    // find next move
+    if (!_targets.empty()) {
+        std::pair<int, int> firstTarget = _targets.front();  // only first for now
+        std::pair<int, int> nextMove = PathFinder::getNextMove(_x, _y, firstTarget.first, firstTarget.second);
+        
+        if (nextMove.first == _x && nextMove.second == _y) {
+            std::cout << "Robot is at target" << std::endl;
+            _targets.erase(_targets.begin());
+            move();
+        } else {
+            _x = nextMove.first;
+            _y = nextMove.second;
+        }
+    } else {
+        move();
+    }
+
+    // check next move
     int i = 0;
     while (!_collisionDetection->canRobotMoveTo(_id, _x, _y)) {
         // TODO redo this...
-        DEBUG_MSG(_id << ": Next move (" << _x << ", " << _y << ") not possible. Trying a different move." << std::endl);
+        DEBUG_MSG(_id << ": Next move (" << _x << ", " << _y << ") not possible. Trying a different move."
+                      << std::endl);
         _x = oldX;
         _y = oldY;
         // jump out of loop if robot tries to move more than 10 times
-        if(i > 10) {
+        if (i >= 10) {
             DEBUG_MSG(_id << ": No possible moves. Staying in place." << std::endl);
             break;
         }
@@ -97,6 +119,7 @@ void Robot::updateState() {
         i++;
     }
 
+    // item check should only be needed if robot is at a target, so move this up?
     std::string itemId = _collisionDetection->findItem(_x, _y);
     // if item is found
     if (!itemId.empty()) {

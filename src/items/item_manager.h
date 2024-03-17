@@ -18,7 +18,7 @@ class ItemManager {
     // void removeItemFromRobot(Robot *robot, IItem *item);
 
    private:
-    std::map<std::string, std::unique_ptr<IItem>> *_items;
+    std::map<std::string, std::unique_ptr<IItem>> *_items = nullptr;
 };
 
 #endif  // ITEM_MANAGER_H

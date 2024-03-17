@@ -14,18 +14,19 @@ class ItemManager;
 #include "../sensors/distance_sensor.h"
 #include "../sensors/i_sensor.h"
 #include "inventory.h"
+#include "../path_finder/path_finder.h"
 
 class Robot {
    private:
     EventDispatcher *_eventDispatcher;
     std::vector<std::unique_ptr<ISensor>> _sensors;
-    // std::unique_ptr<ItemManager> *_itemManager;
     ItemManager *_itemManager;
     CollisionDetection *_collisionDetection;
     Inventory _inventory;
 
+    std::vector<std::pair<int, int>> _targets;
     std::string _id;
-    int _x, _y = 0;
+    int _x = 0, _y = 0;
     int _direction = 0;
 
    public:
@@ -40,6 +41,7 @@ class Robot {
     Inventory getInventory();
     void turn(int direction);
     void move();
+    void moveTo(std::pair<int, int> coordinates);
     void updateState();
     void printState();
 };

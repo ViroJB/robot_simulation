@@ -1,5 +1,9 @@
 ✅
 
+NEXT:
+- pathfinding to item(as a sensor? an actuator? or own module, so it can be used by others)
+- does the robot a processor? some calculations/actions could be deactivated if no processor is attached
+
 - Global
 -- Event Dispatcher
 

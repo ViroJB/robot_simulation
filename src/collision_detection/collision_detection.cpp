@@ -3,7 +3,6 @@
 
 CollisionDetection::CollisionDetection() {
 }
-
 // TODO add checks for empty/not set maps
 
 void CollisionDetection::setRobots(std::map<std::string, std::unique_ptr<Robot>> *robots) { _robots = robots; }

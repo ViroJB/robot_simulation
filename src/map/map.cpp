@@ -1,19 +1,18 @@
 #include "map.h"
 
-Map::Map(std::pair<int, int> mapSize, std::map<std::string, std::unique_ptr<Robot>> *robots, std::map<std::string, std::unique_ptr<IItem>> *items) {
-    _grid.resize(mapSize.first, std::vector<char>(mapSize.second, '.'));
-    _robots = robots;
-    _items = items;
-}
+Map::Map(std::pair<int, int> mapSize) { _grid.resize(mapSize.first, std::vector<char>(mapSize.second, '.')); }
 
 // TODO add checks for empty/not set maps
 
+void Map::setRobots(std::map<std::string, std::unique_ptr<Robot>> *robots) { _robots = robots; }
+void Map::setItems(std::map<std::string, std::unique_ptr<IItem>> *items) { _items = items; }
 
 std::vector<std::vector<char>> Map::getGrid() { return _grid; }
 
 void Map::drawRobots(std::map<std::string, std::unique_ptr<Robot>> *robots) {
+    std::pair<int, int> coordinates;
     for (auto &robot : *robots) {
-        std::pair<int, int> coordinates = robot.second->getPosition();
+        coordinates = robot.second->getPosition();
         _grid[coordinates.first][coordinates.second] = 'R';
     }
 }
@@ -21,14 +20,18 @@ void Map::drawRobots(std::map<std::string, std::unique_ptr<Robot>> *robots) {
 void Map::drawItems(std::map<std::string, std::unique_ptr<IItem>> *items) {
     for (auto &item : *items) {
         std::pair<int, int> coordinates = item.second->getPosition();
-        _grid[coordinates.first][coordinates.second] = 'I';
+        _grid[coordinates.first][coordinates.second] = 'i';
     }
 }
 
 void Map::prepareMap() {
     resetMap();
-    drawItems(_items);
-    drawRobots(_robots);
+    if (_items != nullptr && _items->empty() == false) {
+        drawItems(_items);
+    }
+    if (_robots != nullptr && _robots->empty() == false) {
+        drawRobots(_robots);
+    }
 }
 
 void Map::resetMap() {
