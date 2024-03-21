@@ -17,13 +17,13 @@ class ItemManager;
 #include "../path_finder/path_finder.h"
 
 class Robot {
+    // TODO robot boot function? and actuators and bla
    private:
     EventDispatcher *_eventDispatcher;
-    std::vector<std::unique_ptr<ISensor>> _sensors;
-    ItemManager *_itemManager;
     CollisionDetection *_collisionDetection;
+    ItemManager *_itemManager;
     Inventory _inventory;
-
+    std::vector<std::unique_ptr<ISensor>> _sensors;
     std::vector<std::pair<int, int>> _targets;
     std::string _id;
     int _x = 0, _y = 0;
@@ -31,10 +31,10 @@ class Robot {
 
    public:
     Robot(std::string id, EventDispatcher *eventDispatcher);
-    void setPosition(int x, int y);
     void setSensors(std::vector<std::unique_ptr<ISensor>> &&sensors);
     void setCollisionDetection(CollisionDetection *collisionDetection);
     void setItemManager(ItemManager *itemManager);
+    void setPosition(int x, int y);
     std::pair<int, int> getPosition();
     std::string getId();
     void initSensors();

@@ -80,7 +80,6 @@ void Robot::moveTo(std::pair<int, int> coordinates) {
 }
 
 void Robot::updateState() {
-
     int oldX = _x;
     int oldY = _y;
 
@@ -88,9 +87,16 @@ void Robot::updateState() {
     if (!_targets.empty()) {
         std::pair<int, int> firstTarget = _targets.front();  // only first for now
         std::pair<int, int> nextMove = PathFinder::getNextMove(_x, _y, firstTarget.first, firstTarget.second);
-        
+
         if (nextMove.first == _x && nextMove.second == _y) {
             std::cout << "Robot is at target" << std::endl;
+
+            // if target is an item, pick it up
+            std::string itemId = _collisionDetection->findItem(_x, _y);
+            if (!itemId.empty()) {
+                _itemManager->moveItemToRobot(itemId, this);
+            }
+
             _targets.erase(_targets.begin());
             move();
         } else {
@@ -119,13 +125,7 @@ void Robot::updateState() {
         i++;
     }
 
-    // item check should only be needed if robot is at a target, so move this up?
-    std::string itemId = _collisionDetection->findItem(_x, _y);
-    // if item is found
-    if (!itemId.empty()) {
-        _itemManager->moveItemToRobot(itemId, this);
-    }
-
+    // publish new position
     std::pair<int, int> coordinates = getPosition();
     _eventDispatcher->dispatchEvent(_id + "ChangedPosition", coordinates);
 
@@ -143,7 +143,14 @@ void Robot::printState() {
 
     std::cout << _id << ": Sensors (" << _sensors.size() << "): " << std::endl;
     for (auto &sensor : _sensors) {
-        std::cout << "   " << sensor->getId() << " Data: " << sensor->getData() << std::endl;
+        std::cout << "   " << sensor->getId() << " Data: " << std::endl;
+
+        if (std::holds_alternative<int>(sensor->getData())) {
+            std::cout << std::get<int>(sensor->getData());
+        } else if (std::holds_alternative<std::pair<int, int>>(sensor->getData())) {
+            auto data = std::get<std::pair<int, int>>(sensor->getData());
+            std::cout << "(" << data.first << ", " << data.second << ")";
+        }
     }
     std::cout << std::endl;
 }

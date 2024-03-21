@@ -11,9 +11,9 @@ class DistanceSensor : public ISensor {
    private:
     std::string _id = "DistanceSensor";
     std::string _attachedTo;
-    int _distance;
+    int _distance = 0;
     int _targetX, _targetY;
-    int _robotX, _robotY;
+    int _robotX = 0, _robotY = 0;
     EventDispatcher *_eventDispatcher;
 
    public:
@@ -21,11 +21,12 @@ class DistanceSensor : public ISensor {
 
     void setEventDispatcher(EventDispatcher *eventDispatcher);
     void attachTo(std::string id);
-    void eventTriggered(const std::any &data);
+    void receiveRobotPositionChanged(const std::any &data);
+    void receiveTargetPositionChanged(const std::any &data);
     void measure();
     void setTargetPosition(int x, int y);
     void setRobotPosition(int x, int y);
-    int getData();
+    DataType getData();
     std::string getId();
 };
 

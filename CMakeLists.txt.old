@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 3.5...3.21)
-
-project(robot_simulation)
-
-set(CMAKE_CXX_STANDARD 17)
-
-add_executable(robot_simulation main.cpp robot.cpp distance_sensor.cpp map.cpp event_dispatcher.cpp)

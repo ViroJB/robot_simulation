@@ -29,6 +29,7 @@ int main() {
 
     std::pair<int, int> mapSize = {10, 10};
     Map map(mapSize);
+
     map.setRobots(&robots);
     map.setItems(&items);
 
