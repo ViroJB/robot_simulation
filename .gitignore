@@ -1,6 +1,7 @@
 .vscode/
+.vscode.bak/
+CMakeLists.txt.bak
 build/
-CMakeLists.txt
 c_make_list_automated.py
 *.exe
-*.clang-format
+.clang-format
