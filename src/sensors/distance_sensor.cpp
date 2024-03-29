@@ -1,14 +1,17 @@
 #include "distance_sensor.h"
 
-DistanceSensor::DistanceSensor() : _targetX(9), _targetY(9) {}
+DistanceSensor::DistanceSensor() : _targetX(9), _targetY(9) {} // TODO remove default target position
 
 void DistanceSensor::attachTo(std::string id) {
     _attachedTo = id;
-    _eventDispatcher->registerForEvent(id + "ChangedPosition",
-                                       [this](const std::any &data) { this->receiveRobotPositionChanged(data); });
+    // TODO reenable this after new event dispatcher is implemented
+    // _eventDispatcher->registerForEvent(id + "ChangedPosition",
+    //                                    [this](const std::any &data) { this->receiveRobotPositionChanged(data); });
+    _publisher->subscribe(id + "ChangedPosition", std::bind(&DistanceSensor::receiveRobotPositionChanged, this, std::placeholders::_1));
+    _publisher->subscribe(id + "TargetChangedPosition", std::bind(&DistanceSensor::receiveTargetPositionChanged, this, std::placeholders::_1));
 }
 
-void DistanceSensor::setEventDispatcher(EventDispatcher *eventDispatcher) { _eventDispatcher = eventDispatcher; }
+void DistanceSensor::setPublisher(Publisher *publisher) { _publisher = publisher; }
 
 void DistanceSensor::receiveRobotPositionChanged(const std::any &data) {
     if (!data.has_value()) {

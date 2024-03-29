@@ -12,16 +12,16 @@
 class Map {
    private:
     std::vector<std::vector<char>> _grid;
-    std::map<std::string, std::unique_ptr<Robot>> *_robots = nullptr;
-    std::map<std::string, std::unique_ptr<IItem>> *_items = nullptr;
+    const std::map<std::string, std::unique_ptr<Robot>> *_robots = nullptr;
+    const std::map<std::string, std::unique_ptr<IItem>> *_items = nullptr;
 
    public:
-    Map(std::pair<int, int> mapSize);
+    Map(int x, int y);
     std::vector<std::vector<char>> getGrid();
-    void drawRobots(std::map<std::string, std::unique_ptr<Robot>> *robots);
-    void drawItems(std::map<std::string, std::unique_ptr<IItem>> *items);
-    void setRobots(std::map<std::string, std::unique_ptr<Robot>> *robots);
-    void setItems(std::map<std::string, std::unique_ptr<IItem>> *items);
+    void drawRobots(const std::map<std::string, std::unique_ptr<Robot>> *robots);
+    void drawItems(const std::map<std::string, std::unique_ptr<IItem>> *items);
+    void setRobots(const std::map<std::string, std::unique_ptr<Robot>> *robots);
+    void setItems(const std::map<std::string, std::unique_ptr<IItem>> *items);
     void prepareMap();
     void resetMap();
     void printMap();

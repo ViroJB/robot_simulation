@@ -4,14 +4,16 @@
 #include <string>
 #include <variant>
 
+#include "../events/publisher.h"
+
 class ISensor {
    private:
     std::string _id;
 
    public:
-    using DataType = std::variant<int, std::pair<int, int>>;
+    using DataType = std::any;
 
-    virtual void setEventDispatcher(EventDispatcher *eventDispatcher) = 0;
+    virtual void setPublisher(Publisher *publisher) = 0;
     virtual void attachTo(std::string id) = 0;
     virtual void measure() = 0;
     // virtual int getData() = 0;

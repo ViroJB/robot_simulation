@@ -10,6 +10,7 @@ class Cube : public IItem {
 
    public:
     Cube();
+    Cube(std::string id);
     std::string getId();
     void setPosition(int x, int y);
     std::pair<int, int> getPosition();

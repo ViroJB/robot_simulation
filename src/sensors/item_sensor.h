@@ -2,8 +2,11 @@
 #define ITEM_SENSOR_H
 
 #include <vector>
+#include <map>
+#include <memory>
 
-#include "../event_dispatcher/event_dispatcher.h"
+#include "../events/publisher.h"
+#include "../items/i_item.h"
 #include "i_sensor.h"
 
 // TODO changed return type in ISensor::getData to DataType(std::variant), change the rest of the code so it works again..
@@ -11,14 +14,19 @@
 class ItemSensor : public ISensor {
    public:
     ItemSensor() {}
-    void setEventDispatcher(EventDispatcher *eventDispatcher);
+    void setPublisher(Publisher *publisher);
     void attachTo(std::string id);
     void measure();
+    void receiveItemListUpdated(const std::any &data);
+    // returns all found items
     DataType getData();
+    std::string getId();
+    std::vector<std::pair<int, int>> getItemPositions();
 
    private:
+    std::string _id = "ItemSensor";
     std::string _attachedTo;
-    EventDispatcher *_eventDispatcher;
+    Publisher *_publisher;
     std::vector<std::pair<int, int>> _itemPositions;
 };
 

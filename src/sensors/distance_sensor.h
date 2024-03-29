@@ -3,23 +3,23 @@
 
 #include <iostream>
 
-#include "../debug.h"
-#include "../event_dispatcher/event_dispatcher.h"
 #include "i_sensor.h"
+#include "../debug.h"
+#include "../events/publisher.h"
 
 class DistanceSensor : public ISensor {
    private:
     std::string _id = "DistanceSensor";
     std::string _attachedTo;
     int _distance = 0;
-    int _targetX, _targetY;
+    int _targetX = 0, _targetY = 0;
     int _robotX = 0, _robotY = 0;
-    EventDispatcher *_eventDispatcher;
+    Publisher *_publisher;
 
    public:
     DistanceSensor();
 
-    void setEventDispatcher(EventDispatcher *eventDispatcher);
+    void setPublisher(Publisher *publisher);
     void attachTo(std::string id);
     void receiveRobotPositionChanged(const std::any &data);
     void receiveTargetPositionChanged(const std::any &data);

@@ -3,8 +3,11 @@
 #include "../collision_detection/collision_detection.h"
 #include "../items/item_manager.h"
 
-Robot::Robot(std::string id, EventDispatcher *eventDispatcher) : _id(id), _eventDispatcher(eventDispatcher) {
-    // TODO remove
+Robot::Robot(std::string id, Publisher *publisher) : _id(id), _publisher(publisher) {
+    // _eventDispatcher->registerForEvent(_id + "NewTargets",
+    //                                    [this](const std::any &data) { this->receiveNewTargets(data); });
+
+    // TODO default target, remove
     _targets.push_back(std::make_pair(0, 7));
 }
 
@@ -14,18 +17,28 @@ void Robot::setPosition(int x, int y) {
     _x = x;
     _y = y;
 }
-void Robot::setSensors(std::vector<std::unique_ptr<ISensor>> &&sensors) {
+void Robot::setSensors(std::map<std::string, std::unique_ptr<ISensor>> sensors) {
     _sensors = std::move(sensors);
     initSensors();
 }
+void Robot::setDirection(int direction) { _direction = direction; }
+int Robot::getDirection() { return _direction; }
 std::pair<int, int> Robot::getPosition() { return std::make_pair(_x, _y); }
 std::string Robot::getId() { return _id; }
 Inventory Robot::getInventory() { return _inventory; }
 
+void Robot::receiveNewTargets(const std::any &data) {
+    if (!data.has_value()) {
+        // DEBUG_MSG(_attachedTo << ": " << _id << ": missing event data.");
+        return;
+    }
+    // _targets = std::any_cast<std::vector<std::pair<int, int>>>(data);
+}
+
 void Robot::initSensors() {
     for (auto &sensor : _sensors) {
-        sensor->setEventDispatcher(_eventDispatcher);
-        sensor->attachTo(_id);
+        sensor.second->setPublisher(_publisher);
+        sensor.second->attachTo(_id);
     }
 }
 
@@ -89,7 +102,7 @@ void Robot::updateState() {
         std::pair<int, int> nextMove = PathFinder::getNextMove(_x, _y, firstTarget.first, firstTarget.second);
 
         if (nextMove.first == _x && nextMove.second == _y) {
-            std::cout << "Robot is at target" << std::endl;
+            DEBUG_MSG(_id << ": Robot is at target");
 
             // if target is an item, pick it up
             std::string itemId = _collisionDetection->findItem(_x, _y);
@@ -111,8 +124,7 @@ void Robot::updateState() {
     int i = 0;
     while (!_collisionDetection->canRobotMoveTo(_id, _x, _y)) {
         // TODO redo this...
-        DEBUG_MSG(_id << ": Next move (" << _x << ", " << _y << ") not possible. Trying a different move."
-                      << std::endl);
+        DEBUG_MSG(_id << ": Next move (" << _x << ", " << _y << ") not possible. Trying a different move." << std::endl);
         _x = oldX;
         _y = oldY;
         // jump out of loop if robot tries to move more than 10 times
@@ -127,11 +139,19 @@ void Robot::updateState() {
 
     // publish new position
     std::pair<int, int> coordinates = getPosition();
-    _eventDispatcher->dispatchEvent(_id + "ChangedPosition", coordinates);
+    _publisher->publish(_id + "ChangedPosition", coordinates);
 
     for (auto &sensor : _sensors) {
-        sensor->measure();
+        sensor.second->measure();
     }
+
+    // NOTE: for now, update targets manually
+    // TODO find closest target and publish that
+    _targets = std::any_cast<std::vector<std::pair<int, int>>>(_sensors["ItemSensor"]->getData());
+    if(!_targets.empty()) {
+        _publisher->publish(_id + "TargetChangedPosition", _targets.front());
+    }
+
 #ifdef DEBUG
     printState();
 #endif
@@ -143,14 +163,17 @@ void Robot::printState() {
 
     std::cout << _id << ": Sensors (" << _sensors.size() << "): " << std::endl;
     for (auto &sensor : _sensors) {
-        std::cout << "   " << sensor->getId() << " Data: " << std::endl;
+        std::cout << "   " << sensor.second->getId() << " Data: ";
 
-        if (std::holds_alternative<int>(sensor->getData())) {
-            std::cout << std::get<int>(sensor->getData());
-        } else if (std::holds_alternative<std::pair<int, int>>(sensor->getData())) {
-            auto data = std::get<std::pair<int, int>>(sensor->getData());
-            std::cout << "(" << data.first << ", " << data.second << ")";
+        if(sensor.second->getData().type() == typeid(int)) {
+            std::cout << std::any_cast<int>(sensor.second->getData());
+        } else if(sensor.second->getData().type() == typeid(std::vector<std::pair<int, int>>)) {
+            auto data = std::any_cast<std::vector<std::pair<int, int>>>(sensor.second->getData());
+            std::cout << "ItemSize: " << data.size();
+        } else {
+            std::cout << "unknown data type";
         }
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
