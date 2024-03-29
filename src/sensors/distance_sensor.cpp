@@ -4,9 +4,7 @@ DistanceSensor::DistanceSensor() : _targetX(9), _targetY(9) {} // TODO remove de
 
 void DistanceSensor::attachTo(std::string id) {
     _attachedTo = id;
-    // TODO reenable this after new event dispatcher is implemented
-    // _eventDispatcher->registerForEvent(id + "ChangedPosition",
-    //                                    [this](const std::any &data) { this->receiveRobotPositionChanged(data); });
+
     _publisher->subscribe(id + "ChangedPosition", std::bind(&DistanceSensor::receiveRobotPositionChanged, this, std::placeholders::_1));
     _publisher->subscribe(id + "TargetChangedPosition", std::bind(&DistanceSensor::receiveTargetPositionChanged, this, std::placeholders::_1));
 }

@@ -19,10 +19,9 @@ void ItemSensor::receiveItemListUpdated(const std::any &data) {
 void ItemSensor::attachTo(std::string id) { _attachedTo = id; }
 
 void ItemSensor::measure() {
-    // _publisher->publish(_attachedTo + "NewTargets");
+    // what could we do here?
 }
 
-// TODO implement
 ISensor::DataType ItemSensor::getData() {
     DataType data = _itemPositions; // = _itemPositions;
     return data;

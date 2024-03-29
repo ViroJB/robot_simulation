@@ -24,7 +24,6 @@ include(GoogleTest)
 add_executable(robot_simulation
     ./main.cpp
     ./src/collision_detection/collision_detection.cpp
-    ./src/event_dispatcher/event_dispatcher.cpp
     ./src/items/cube.cpp
     ./src/items/item_manager.cpp
     ./src/map/map.cpp
@@ -44,7 +43,6 @@ add_executable(robot_simulation
 #     ./test/distance_sensor_test.cpp
 #     ./test/robot_test.cpp
 #     ./src/collision_detection/collision_detection.cpp
-#     ./src/event_dispatcher/event_dispatcher.cpp
 #     ./src/items/cube.cpp
 #     ./src/items/item_manager.cpp
 #     ./src/map/map.cpp

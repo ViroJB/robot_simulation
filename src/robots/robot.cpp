@@ -4,11 +4,6 @@
 #include "../items/item_manager.h"
 
 Robot::Robot(std::string id, Publisher *publisher) : _id(id), _publisher(publisher) {
-    // _eventDispatcher->registerForEvent(_id + "NewTargets",
-    //                                    [this](const std::any &data) { this->receiveNewTargets(data); });
-
-    // TODO default target, remove
-    _targets.push_back(std::make_pair(0, 7));
 }
 
 void Robot::setCollisionDetection(CollisionDetection *collisionDetection) { _collisionDetection = collisionDetection; }
@@ -26,14 +21,6 @@ int Robot::getDirection() { return _direction; }
 std::pair<int, int> Robot::getPosition() { return std::make_pair(_x, _y); }
 std::string Robot::getId() { return _id; }
 Inventory Robot::getInventory() { return _inventory; }
-
-void Robot::receiveNewTargets(const std::any &data) {
-    if (!data.has_value()) {
-        // DEBUG_MSG(_attachedTo << ": " << _id << ": missing event data.");
-        return;
-    }
-    // _targets = std::any_cast<std::vector<std::pair<int, int>>>(data);
-}
 
 void Robot::initSensors() {
     for (auto &sensor : _sensors) {
@@ -81,8 +68,8 @@ void Robot::move() {
         ++_x;
     } else if (_direction == South) {
         --_y;
-        // West
     } else {
+        // West
         --_x;
     }
 }

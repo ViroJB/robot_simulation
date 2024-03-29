@@ -2,8 +2,6 @@
 
 Map::Map(int sizeX, int sizeY) { _grid.resize(sizeX, std::vector<char>(sizeY, '.')); }
 
-// TODO add checks for empty/not set maps
-
 void Map::setRobots(const std::map<std::string, std::unique_ptr<Robot>> *robots) { _robots = robots; }
 void Map::setItems(const std::map<std::string, std::unique_ptr<IItem>> *items) { _items = items; }
 

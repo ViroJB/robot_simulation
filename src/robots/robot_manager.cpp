@@ -31,7 +31,7 @@ void RobotManager::init() {
 
 const std::map<std::string, std::unique_ptr<Robot>>* RobotManager::getRobots() const { return &_robots; }
 
-// vielleicht ne factory für die sensoren? (builder pattern? factory pattern?)
+// maybe a factory for the sensors? (builder pattern? factory pattern?)
 std::map<std::string, std::unique_ptr<ISensor>> RobotManager::createSensors() {
     std::map<std::string, std::unique_ptr<ISensor>> sensors;
 

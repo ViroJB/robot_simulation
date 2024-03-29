@@ -37,5 +37,5 @@ void ItemManager::moveItemToRobot(std::string itemId, Robot *robot) {
     IItem *item = std::move(_items.at(itemId).get());
     robot->getInventory().addItem(item);
     _items.erase(itemId);
-    publishItems();
+    publishItems(); // NOTE temp, till we found another way of getting the items
 }

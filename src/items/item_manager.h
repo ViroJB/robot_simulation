@@ -23,7 +23,6 @@ class ItemManager {
     void addItem(std::unique_ptr<IItem> item);
     void removeItem(std::string id);
     void moveItemToRobot(std::string itemId, Robot *robot);
-    // void removeItemFromRobot(Robot *robot, IItem *item);
 
    private:
     int _idCounter = 0;

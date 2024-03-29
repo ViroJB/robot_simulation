@@ -22,7 +22,7 @@ void App::init() {
     _robotManager->setItemManager(_itemManager.get());
     _robotManager->init();
     _itemManager->setPublisher(_publisher.get());
-    _itemManager->init(); // muss erstmal hier unten sein, nach robotmanager init, wegen event publishing...
+    _itemManager->init();  // gotta be here for now, after robot manager init, because of event publishing order..
 
     // TODO remove
     // _publisher->subscribe("testevent", std::bind(&App::testEvent, this, std::placeholders::_1));
@@ -31,28 +31,31 @@ void App::init() {
 
 void App::run() {
     int counter = 1;  // 1-indexed! Ha ha.. ha
+    int itemIndex = 0;
     while (true) {
         // clear console window (thanks copilot)
-        std::cout << "\033[2J\033[1;1H";
-
+        // std::cout << "\033[2J\033[1;1H";
+        // std::cout << "Counter: " << counter << std::endl; // for no thread-sleep visibility of the counter
         _map->printMap();
 
         for (auto &robot : *_robotManager->getRobots()) {
             robot.second->updateState();
         }
 
-        // alle 15 ticks ein item spawnen
+        // temp: every 15 ticks spawn items
         if (counter % 10 == 0) {
-            _itemManager->createCube("Cube0" + counter, rand() % (Config::MAP_SIZE_X -1), rand() % (Config::MAP_SIZE_Y -1));
+            _itemManager->createCube("Cube0" + itemIndex, rand() % (Config::MAP_SIZE_X - 1),
+                                     rand() % (Config::MAP_SIZE_Y - 1));
+            itemIndex++;
+            _itemManager->createCube("Cube0" + itemIndex, rand() % (Config::MAP_SIZE_X - 1),
+                                     rand() % (Config::MAP_SIZE_Y - 1));
+            itemIndex++;
         }
 
         std::cout << "Counter: " << counter << std::endl;
         counter++;
 
-        // TODO remove
-        // _publisher->publish("testevent", std::make_pair(101, 202));
-
         // sleep
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(400));
     }
 }

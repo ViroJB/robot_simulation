@@ -17,7 +17,7 @@ class ItemManager;
 #include "../path_finder/path_finder.h"
 
 class Robot {
-    // TODO robot boot function? and actuators and bla
+    // TODO robot boot function? to start actuators like motor? who knows.. 
    private:
     Publisher *_publisher;
     CollisionDetection *_collisionDetection;
@@ -36,7 +36,6 @@ class Robot {
     void setItemManager(ItemManager *itemManager);
     void setPosition(int x, int y);
     void setDirection(int direction);
-    void receiveNewTargets(const std::any &data);
     int getDirection();
     std::pair<int, int> getPosition();
     std::string getId();

@@ -12,7 +12,6 @@ class Inventory {
     Inventory();
     void addItem(IItem *item);
     IItem* moveItem(std::string id);
-    //void removeItem(std::string id);
 
    private:
     std::map<std::string, std::unique_ptr<IItem>>* _items;

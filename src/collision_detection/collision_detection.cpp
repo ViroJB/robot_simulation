@@ -1,8 +1,7 @@
 #include "collision_detection.h"
 
+//  here because of looping includes shit thingy
 #include "../robots/robot.h"
-
-// TODO add checks for empty/not set maps
 
 void CollisionDetection::setRobots(const std::map<std::string, std::unique_ptr<Robot>> *robots) { _robots = robots; }
 
