@@ -79,13 +79,30 @@ void Robot::moveTo(std::pair<int, int> coordinates) {
     _y = coordinates.second;
 }
 
+std::pair<int, int> Robot::findClosestTarget() {
+    std::pair<int, int> closestTarget;
+    int closestDistance = 1000; // a big number for now?
+    int distance; 
+    for(auto &target : _targets) {
+        distance = abs(_x - target.first) + abs(_y - target.second); // distance sensor should be used here (or not?)
+        if(distance < closestDistance) {
+            closestDistance = distance;
+            closestTarget = target;
+        }
+    }
+    return closestTarget;
+}
+
 void Robot::updateState() {
     int oldX = _x;
     int oldY = _y;
 
     // find next move
     if (!_targets.empty()) {
-        std::pair<int, int> firstTarget = _targets.front();  // only first for now
+
+        // TODO redo this
+        std::pair<int, int> closestTarget = findClosestTarget();
+        std::pair<int, int> firstTarget = closestTarget;
         std::pair<int, int> nextMove = PathFinder::getNextMove(_x, _y, firstTarget.first, firstTarget.second);
 
         if (nextMove.first == _x && nextMove.second == _y) {

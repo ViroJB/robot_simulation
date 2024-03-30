@@ -4,13 +4,12 @@
 #include <memory>
 #include <map>
 
-// wieder der scheiss mit loop von class includes...
+// again the shit with loop of class includes..
 #include "i_item.h"
 #include "../robots/robot.h"
 #include "cube.h"
 #include "../events/publisher.h"
 
-// TODO create items here
 class ItemManager {
    public:
     ItemManager();

@@ -40,6 +40,7 @@ class Robot {
     std::pair<int, int> getPosition();
     std::string getId();
     void initSensors();
+    std::pair<int, int> findClosestTarget();
     Inventory getInventory();
     void turn(int direction);
     void move();
